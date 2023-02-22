@@ -37,5 +37,20 @@ class Song
     song = Song.new(name: name, album: album)
     song.save
   end
+   def save
+    sql = <<-SQL
+      INSERT INTO songs (name, album)
+      VALUES (?, ?)
+    SQL
+
+    DB[:conn].execute(sql, self.name, self.album)
+ # get the song ID from the database and save it to the Ruby instance
+    self.id = DB[:conn].execute("SELECT last_insert_rowid() FROM songs")[0][0]
+
+    # return the Ruby instance
+    self
+  end
 
 end
+gold_digger = Song.new(name: "Gold Digger", album: "Late Registration")
+hello = Song.new(name: "Hello", album: "25")
